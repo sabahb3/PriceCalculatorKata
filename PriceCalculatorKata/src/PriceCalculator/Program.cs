@@ -3,13 +3,80 @@ namespace PriceCalculator
 {
     public class Program
     {
+        private static List<Product> products= new List<Product>();
+        public static string DisplayMenu()
+        {
+            String message = string.Empty;
+            message += "\n\nWelcome to Price Calculator Kata \n";
+            message += "press 1 : Change Tax value \n";
+            message += "press 2 : Add new prduct \n";
+            message += "press 3: Display product's description \n";
+
+            return message;
+        }
+
+        public static void PerformAction(string choice)
+        {
+            switch (choice)
+            {
+                case "1":
+                    ChangeTax();
+                    break;
+
+                case "2":
+                    GetProductInfo();
+                    break;
+         
+                case "3":
+                    DisplayProducts();
+                    break;
+         
+                default:
+                    break;
+            }
+        }
+
+        private static void DisplayProducts()
+        {
+           foreach(var product in products)Console.WriteLine(product.Display());
+        }
+
+        private static void ChangeTax(){
+            Console.WriteLine("Enter the new Tax");
+            string newValue=Console.ReadLine()??string.Empty;
+            Tax.GetTax().setTax(newValue);
+        }
+
+        private static void GetProductInfo(){
+            Console.WriteLine("Enter prduct's name");
+            string productName=Console.ReadLine()??string.Empty;
+
+            Console.WriteLine("Enter product's UPC");
+            string productUPC=Console.ReadLine()??string.Empty;
+
+            Console.WriteLine("Enter product's price");
+            string productPrice=Console.ReadLine()??string.Empty;
+
+            addProduct(productName,productUPC,productPrice);
+
+        }
+        private static void addProduct(string name, string upc, string price){
+            if(!Product.validEntry(name,upc,price))return;
+            var p=new Product(name,int.Parse(upc),double.Parse(price));
+            products.Add(p);
+        }
+ 
+ 
         public static void Main(string[] args)
         {
-            Product product=new Product("The Little Prince",12345,20.215);
-            string displayed=$"Name = {product.Name}, Price= {string.Format("{0:0.##}",product.Price)}, UPC: {product.UPC}";
-            Console.WriteLine(displayed);
-            product.Name="The Prince";
-            Console.WriteLine(product.Name);
+            string input = string.Empty;
+            while (true)
+            {
+                Console.WriteLine(DisplayMenu());
+                input = Console.ReadLine()??string.Empty;
+                if (input.Length != 1) continue;
+                PerformAction(input);
+            }
         }
 
     }
