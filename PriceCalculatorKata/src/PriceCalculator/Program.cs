@@ -5,6 +5,7 @@ namespace PriceCalculator
     {
         private static List<IProduct> products = new List<IProduct>();
         private static ITax tax = Tax.GetTax();
+        private static IDiscount discount =RelativeDiscount.GetDiscountInstance();
 
         public static string DisplayMenu()
         {
@@ -12,7 +13,9 @@ namespace PriceCalculator
             message += "\n\nWelcome to Price Calculator Kata \n";
             message += "press 1 : Change Tax value \n";
             message += "press 2 : Add new prduct \n";
-            message += "press 3: Display product's description \n";
+            message += "press 3 : Display product's description \n";
+            message += "press 4 : Change Relative Discount value\n";
+            message += "press # : to exit"; 
 
             return message;
         }
@@ -33,6 +36,9 @@ namespace PriceCalculator
                     DisplayProducts();
                     break;
 
+                case "4":
+                    ChangeDiscount();
+                    break;
                 default:
                     break;
             }
@@ -67,7 +73,15 @@ namespace PriceCalculator
         }
         private static void DisplayProducts()
         {
-            foreach (var product in products) Console.WriteLine(product.DisplayProductDescription());
+            foreach (var product in products) 
+            Console.WriteLine(product.DisplayProductDescription(Enumerations.ProductDescription.RelativeDiscount));
+        }
+
+        private static void ChangeDiscount()
+        {
+            Console.WriteLine("Enter the new Discount");
+            string newValue = Console.ReadLine() ?? string.Empty;
+            discount.SetDiscount(newValue);
         }
 
 
@@ -79,6 +93,7 @@ namespace PriceCalculator
                 Console.WriteLine(DisplayMenu());
                 input = Console.ReadLine() ?? string.Empty;
                 if (input.Length != 1) continue;
+                if(input=="#")break;
                 PerformAction(input);
             }
         }
