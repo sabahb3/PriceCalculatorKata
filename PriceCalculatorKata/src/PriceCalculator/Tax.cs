@@ -1,6 +1,6 @@
 namespace PriceCalculator
 {
-    public class Tax
+    public class Tax : ITax
     {
         private static readonly Tax s_taxInstance = new Tax();
         private Tax() { }

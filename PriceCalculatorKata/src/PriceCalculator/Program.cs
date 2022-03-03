@@ -3,7 +3,9 @@ namespace PriceCalculator
 {
     public class Program
     {
-        private static List<Product> products= new List<Product>();
+        private static List<IProduct> products = new List<IProduct>();
+        private static ITax tax = Tax.GetTax();
+
         public static string DisplayMenu()
         {
             String message = string.Empty;
@@ -26,54 +28,56 @@ namespace PriceCalculator
                 case "2":
                     GetProductInfo();
                     break;
-         
+
                 case "3":
                     DisplayProducts();
                     break;
-         
+
                 default:
                     break;
             }
         }
 
-        private static void DisplayProducts()
+        private static void ChangeTax()
         {
-           foreach(var product in products)Console.WriteLine(product.Display());
-        }
-
-        private static void ChangeTax(){
             Console.WriteLine("Enter the new Tax");
-            string newValue=Console.ReadLine()??string.Empty;
-            Tax.GetTax().setTax(newValue);
+            string newValue = Console.ReadLine() ?? string.Empty;
+            tax.setTax(newValue);
         }
 
-        private static void GetProductInfo(){
+        private static void GetProductInfo()
+        {
             Console.WriteLine("Enter prduct's name");
-            string productName=Console.ReadLine()??string.Empty;
+            string productName = Console.ReadLine() ?? string.Empty;
 
             Console.WriteLine("Enter product's UPC");
-            string productUPC=Console.ReadLine()??string.Empty;
+            string productUPC = Console.ReadLine() ?? string.Empty;
 
             Console.WriteLine("Enter product's price");
-            string productPrice=Console.ReadLine()??string.Empty;
+            string productPrice = Console.ReadLine() ?? string.Empty;
 
-            addProduct(productName,productUPC,productPrice);
+            AddProduct(productName, productUPC, productPrice);
 
         }
-        private static void addProduct(string name, string upc, string price){
-            if(!Product.validEntry(name,upc,price))return;
-            var p=new Product(name,int.Parse(upc),double.Parse(price));
+        private static void AddProduct(string name, string upc, string price)
+        {
+            if (!Product.validEntry(name, upc, price)) return;
+            var p = new Product(name, int.Parse(upc), double.Parse(price));
             products.Add(p);
         }
- 
- 
+        private static void DisplayProducts()
+        {
+            foreach (var product in products) Console.WriteLine(product.DisplayProductDescription());
+        }
+
+
         public static void Main(string[] args)
         {
             string input = string.Empty;
             while (true)
             {
                 Console.WriteLine(DisplayMenu());
-                input = Console.ReadLine()??string.Empty;
+                input = Console.ReadLine() ?? string.Empty;
                 if (input.Length != 1) continue;
                 PerformAction(input);
             }
