@@ -7,8 +7,12 @@ namespace PriceCalculator
         public double Price { get; set; }
 
         public string DisplayProductDescription();
-         public string DisplayProductDescription(Enumerations.ProductDescription type);
+        public string DisplayProductDescription(Enumerations.ProductDescription type);
         public double CalculateTaxValue();
+        public double CalculateDiscountValue();
+
+        public double CalculatePriceAfterDiscount();
+
 
     }
 }
