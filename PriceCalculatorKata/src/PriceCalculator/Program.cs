@@ -4,9 +4,9 @@ namespace PriceCalculator;
 
 public class Program
 {
-    private static List<IProduct> products = new();
-    private static ITax tax = Tax.GetTax();
-    private static IDiscount discount = RelativeDiscount.GetDiscountInstance();
+    private static List<IProduct> _products = new();
+    private static ITax _tax = Tax.GetTax();
+    private static IDiscount _discount = RelativeDiscount.GetDiscountInstance();
 
     public static string DisplayMenu()
     {
@@ -55,7 +55,7 @@ public class Program
     {
         Console.WriteLine("Enter the new Tax");
         var newValue = Console.ReadLine() ?? string.Empty;
-        tax.setTax(newValue);
+        _tax.SetTax(newValue);
     }
 
     private static void GetProductInfo()
@@ -74,14 +74,14 @@ public class Program
 
     private static void AddProduct(string name, string upc, string price)
     {
-        if (!Product.validEntry(name, upc, price)) return;
+        if (!Product.ValidEntry(name, upc, price)) return;
         var p = new Product(name, int.Parse(upc), double.Parse(price));
-        products.Add(p);
+        _products.Add(p);
     }
 
     private static void DisplayProducts()
     {
-        foreach (var product in products)
+        foreach (var product in _products)
             Console.WriteLine(product.DisplayProductDescription(Enumerations.ProductDescription.RelativeDiscount));
     }
 
@@ -89,12 +89,12 @@ public class Program
     {
         Console.WriteLine("Enter the new Discount");
         var newValue = Console.ReadLine() ?? string.Empty;
-        discount.SetDiscount(newValue);
+        _discount.SetDiscount(newValue);
     }
 
     private static void Reporting()
     {
-        var report = new Report(products);
+        var report = new Report(_products);
         Console.WriteLine(report.Reporting());
     }
 
