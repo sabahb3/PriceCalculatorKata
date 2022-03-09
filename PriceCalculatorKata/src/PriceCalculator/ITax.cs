@@ -1,9 +1,8 @@
-namespace PriceCalculator
+namespace PriceCalculator;
+
+public interface ITax
 {
-    public interface ITax
-    {
-        int TaxValue { get; }
-        bool isValidTax(string tax);
-        void setTax(string newValue);
-    }
+    int TaxValue { get; }
+    bool IsValidTax(string tax);
+    void SetTax(string newValue);
 }

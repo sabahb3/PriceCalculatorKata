@@ -1,8 +1,9 @@
-namespace PriceCalculator
+namespace PriceCalculator;
+
+public static class Enumerations
 {
-    public static class Enumerations
+    public enum ProductDescription
     {
-       
-          public enum ProductDescription { RelativeDiscount };
-    }
+        RelativeDiscount
+    };
 }
