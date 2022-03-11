@@ -8,4 +8,5 @@ public interface IProduct
     public double CalculateTaxValue();
     public double CalculateDiscountValue();
     public double CalculatePriceAfterDiscount();
+    public void SetSpecialDiscount(string value);
 }

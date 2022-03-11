@@ -32,13 +32,18 @@ public class Store
 
     public void RemoveProduct(int upc)
     {
-        foreach (var product in _products)
-            if (product.UPC == upc)
-                _products.Remove(product);
+        foreach (var product in _products.Where(product => product.UPC == upc))
+            _products.Remove(product);
     }
 
     public List<IProduct> GetProducts()
     {
         return _products;
+    }
+
+    public void SetSpecialDiscount(int upc, string discount)
+    {
+        foreach (var product in _products.Where(product => product.UPC == upc))
+            product.SetSpecialDiscount(discount);
     }
 }

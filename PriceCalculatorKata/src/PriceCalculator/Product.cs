@@ -48,4 +48,15 @@ public class Product : IProduct
         if (!double.TryParse(price, out p)) return false;
         return true;
     }
+
+    public void SetSpecialDiscount(string value)
+    {
+        _specialDiscount.SetDiscount(value);
+    }
+
+    public bool HasSpecialDiscount()
+    {
+        if (_specialDiscount.DiscountValue > 0) return true;
+        return false;
+    }
 }
