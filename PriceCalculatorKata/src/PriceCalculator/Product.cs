@@ -2,53 +2,20 @@ namespace PriceCalculator;
 
 public class Product : IProduct
 {
-    private ITax _tax;
-    private IDiscount _relativeDiscount;
+    private IDiscount _specialDiscount;
 
-    public Product(string name, int upc, double price)
+    public Product(string name, int upc, double price, IDiscount specialDiscount)
     {
         Name = name ?? " ";
         UPC = upc;
         Price = price;
-        _tax = Tax.GetTax();
-        _relativeDiscount = RelativeDiscount.GetDiscountInstance();
+        _specialDiscount = specialDiscount;
     }
 
     public string Name { get; set; } = string.Empty;
     public int UPC { get; set; }
     public double Price { get; set; }
 
-    public string DisplayProductDescription()
-    {
-        var productDescription = string.Empty;
-        productDescription =
-            $"\nBook with name = \"{Name}\", UPC = {UPC}, price ={string.Format("{0:0.##}", Price)}.\n";
-        productDescription += $"Product price reported as ${string.Format("{0:0.##}", Price)} before tax";
-        productDescription += $" and ${string.Format("{0:0.##}", CalculatePriceAfterTax())} after {_tax.TaxValue}% tax";
-        return productDescription;
-    }
-
-    public string DisplayProductDescription(Enumerations.ProductDescription type)
-    {
-        var productDescription = string.Empty;
-        if (type == Enumerations.ProductDescription.RelativeDiscount)
-            productDescription = DisplayProductDescriptionWithRelativeDiscount();
-        else productDescription = DisplayProductDescription();
-        return productDescription;
-    }
-
-    public string DisplayProductDescriptionWithRelativeDiscount()
-    {
-        var productDescription = string.Empty;
-        productDescription =
-            $"\nBook with name = \"{Name}\", UPC = {UPC}, price ={string.Format("{0:0.##}", Price)}.\n";
-        productDescription += $"Tax= {_tax.TaxValue}%, discount={_relativeDiscount.DiscountValue}%";
-        productDescription +=
-            $"Tax amount = ${string.Format("{0:0.##}", CalculateTaxValue())}, Discount amount = ${string.Format("{0:0.##}", CalculateDiscountValue())}\n";
-        productDescription +=
-            $" Price before ${string.Format("{0:0.##}", Price)}, price after = ${string.Format("{0:0.##}", CalculatePriceAfterDiscount())}";
-        return productDescription;
-    }
 
     public double CalculatePriceAfterTax()
     {
@@ -57,17 +24,25 @@ public class Product : IProduct
 
     public double CalculateTaxValue()
     {
-        return Price * (_tax.TaxValue / 100.0);
+        var tax = Tax.GetTax();
+        return Price * (tax.TaxValue / 100.0);
     }
 
     public double CalculateDiscountValue()
     {
-        return Price * (_relativeDiscount.DiscountValue / 100.0);
+        var universalDiscount = RelativeDiscount.GetDiscountInstance();
+        return Price * (universalDiscount.DiscountValue / 100.0);
+    }
+
+    public double CalculateUpcDiscountValue()
+    {
+        var upcDiscount = _specialDiscount.DiscountValue;
+        return Price * (upcDiscount / 100.0);
     }
 
     public double CalculatePriceAfterDiscount()
     {
-        return CalculatePriceAfterTax() - CalculateDiscountValue();
+        return CalculatePriceAfterTax() - CalculateDiscountValue() - CalculateUpcDiscountValue();
     }
 
     public static bool ValidEntry(string name, string upc, string price)
@@ -78,5 +53,16 @@ public class Product : IProduct
         double p;
         if (!double.TryParse(price, out p)) return false;
         return true;
+    }
+
+    public void SetSpecialDiscount(string value)
+    {
+        _specialDiscount.SetDiscount(value);
+    }
+
+    public bool HasSpecialDiscount()
+    {
+        if (_specialDiscount.DiscountValue > 0) return true;
+        return false;
     }
 }
