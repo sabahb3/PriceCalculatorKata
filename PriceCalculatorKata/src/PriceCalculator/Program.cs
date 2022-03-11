@@ -14,6 +14,7 @@ public class Program
         message += "press 2 : Add new product \n";
         message += "press 3 : Change Universal Discount value\n";
         message += "press 4 : Display a Report\n";
+        message += "press 5 : Set discount for a specific product\n";
         message += "press # : to exit";
 
         return message;
@@ -38,12 +39,16 @@ public class Program
             case "4":
                 Reporting();
                 break;
-
+            
+            case "5":
+                GetDiscountInfo();
+                break;
+            
             default:
                 break;
         }
     }
-
+    
     private static void ChangeTax()
     {
         Console.WriteLine("Enter the new Tax");
@@ -83,6 +88,21 @@ public class Program
     {
         var report = new Report(_store.GetProducts());
         Console.WriteLine(report.Reporting());
+    }
+
+    private static void GetDiscountInfo()
+    {
+        Console.WriteLine("Enter product's UPC");
+        var productUPC = Console.ReadLine() ?? string.Empty;
+        var parsed = int.TryParse(productUPC, out var upc);
+        if (!parsed)
+        {
+            Console.WriteLine("Should be integer number ");
+            return;
+        }
+        Console.WriteLine("Enter Discount's Amount");
+        var productDiscount = Console.ReadLine() ?? string.Empty;
+        _store.SetSpecialDiscount(upc,productDiscount);
     }
 
 

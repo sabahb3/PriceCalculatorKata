@@ -34,9 +34,15 @@ public class Product : IProduct
         return Price * (universalDiscount.DiscountValue / 100.0);
     }
 
+    public double CalculateUpcDiscountValue()
+    {
+        var upcDiscpunt = _specialDiscount.DiscountValue;
+        return Price * (upcDiscpunt/ 100.0);
+    }
+
     public double CalculatePriceAfterDiscount()
     {
-        return CalculatePriceAfterTax() - CalculateDiscountValue();
+        return CalculatePriceAfterTax() - CalculateDiscountValue()-CalculateUpcDiscountValue();
     }
 
     public static bool ValidEntry(string name, string upc, string price)
