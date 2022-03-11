@@ -10,5 +10,4 @@ public interface IProduct
     public double CalculatePriceAfterDiscount();
     public void SetSpecialDiscount(string value);
     public double CalculateUpcDiscountValue();
-
 }

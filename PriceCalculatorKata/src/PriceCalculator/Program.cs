@@ -39,16 +39,16 @@ public class Program
             case "4":
                 Reporting();
                 break;
-            
+
             case "5":
                 GetDiscountInfo();
                 break;
-            
+
             default:
                 break;
         }
     }
-    
+
     private static void ChangeTax()
     {
         Console.WriteLine("Enter the new Tax");
@@ -100,9 +100,10 @@ public class Program
             Console.WriteLine("Should be integer number ");
             return;
         }
+
         Console.WriteLine("Enter Discount's Amount");
         var productDiscount = Console.ReadLine() ?? string.Empty;
-        _store.SetSpecialDiscount(upc,productDiscount);
+        _store.SetSpecialDiscount(upc, productDiscount);
     }
 
 
