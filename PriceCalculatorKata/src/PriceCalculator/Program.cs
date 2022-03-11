@@ -4,19 +4,16 @@ namespace PriceCalculator;
 
 public class Program
 {
-    private static List<IProduct> _products = new();
-    private static ITax _tax = Tax.GetTax();
-    private static IDiscount _discount = RelativeDiscount.GetDiscountInstance();
+    private static Store _store = new(Tax.GetTax(), RelativeDiscount.GetDiscountInstance(), new List<IProduct>());
 
     public static string DisplayMenu()
     {
         var message = string.Empty;
         message += "\n\nWelcome to Price Calculator Kata \n";
         message += "press 1 : Change Tax value \n";
-        message += "press 2 : Add new prduct \n";
-        message += "press 3 : Display product's description \n";
-        message += "press 4 : Change Relative Discount value\n";
-        message += "press 5 : Display a Report\n";
+        message += "press 2 : Add new product \n";
+        message += "press 3 : Change Universal Discount value\n";
+        message += "press 4 : Display a Report\n";
         message += "press # : to exit";
 
         return message;
@@ -35,14 +32,10 @@ public class Program
                 break;
 
             case "3":
-                DisplayProducts();
-                break;
-
-            case "4":
                 ChangeDiscount();
                 break;
 
-            case "5":
+            case "4":
                 Reporting();
                 break;
 
@@ -55,12 +48,12 @@ public class Program
     {
         Console.WriteLine("Enter the new Tax");
         var newValue = Console.ReadLine() ?? string.Empty;
-        _tax.SetTax(newValue);
+        _store.SetTax(newValue);
     }
 
     private static void GetProductInfo()
     {
-        Console.WriteLine("Enter prduct's name");
+        Console.WriteLine("Enter product's name");
         var productName = Console.ReadLine() ?? string.Empty;
 
         Console.WriteLine("Enter product's UPC");
@@ -75,26 +68,20 @@ public class Program
     private static void AddProduct(string name, string upc, string price)
     {
         if (!Product.ValidEntry(name, upc, price)) return;
-        var p = new Product(name, int.Parse(upc), double.Parse(price));
-        _products.Add(p);
-    }
-
-    private static void DisplayProducts()
-    {
-        foreach (var product in _products)
-            Console.WriteLine(product.DisplayProductDescription(Enumerations.ProductDescription.RelativeDiscount));
+        var p = new Product(name, int.Parse(upc), double.Parse(price), new Discount());
+        _store.AddProduct(p);
     }
 
     private static void ChangeDiscount()
     {
         Console.WriteLine("Enter the new Discount");
         var newValue = Console.ReadLine() ?? string.Empty;
-        _discount.SetDiscount(newValue);
+        _store.SetUniversalDiscount(newValue);
     }
 
     private static void Reporting()
     {
-        var report = new Report(_products);
+        var report = new Report(_store.GetProducts());
         Console.WriteLine(report.Reporting());
     }
 
