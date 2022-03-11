@@ -1,6 +1,6 @@
-// namespace PriceCalculator.Enumerations;
-// public enum Precedence
-// {
-//     AfterTax,
-//     BeforeTax
-// }
+namespace PriceCalculator.Enumerations;
+public enum Precedence
+{
+    AfterTax,
+    BeforeTax
+}
