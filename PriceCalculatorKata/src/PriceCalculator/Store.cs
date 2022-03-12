@@ -1,3 +1,5 @@
+using PriceCalculator.Enumerations;
+
 namespace PriceCalculator;
 
 public class Store
@@ -45,5 +47,16 @@ public class Store
     {
         foreach (var product in _products.Where(product => product.UPC == upc))
             product.SetSpecialDiscount(discount);
+    }
+
+    public void SetUniversalDiscountPrecedence(Precedence precedence)
+    {
+        _discount.DiscountPrecedence = precedence;
+    }
+
+    public void SetUpcDiscountPrecedence(int upc, Precedence precedence)
+    {
+        foreach (var product in _products.Where(product => product.UPC == upc))
+            product.SetDiscountPrecedence(precedence);
     }
 }

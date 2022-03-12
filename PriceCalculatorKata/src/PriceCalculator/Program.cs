@@ -1,4 +1,5 @@
 ﻿using System;
+using PriceCalculator.Enumerations;
 
 namespace PriceCalculator;
 
@@ -15,6 +16,9 @@ public class Program
         message += "press 3 : Change Universal Discount value\n";
         message += "press 4 : Display a Report\n";
         message += "press 5 : Set discount for a specific product\n";
+        message += "press 6 : Set precedence of universal discount \n";
+        message += "press 7 : Set precedence discount for a specific product\n";
+
         message += "press # : to exit";
 
         return message;
@@ -42,6 +46,14 @@ public class Program
 
             case "5":
                 GetDiscountInfo();
+                break;
+
+            case "6":
+                SetUniversalDiscountPrecedence();
+                break;
+
+            case "7":
+                SetUpcDiscountPrecedence();
                 break;
 
             default:
@@ -104,6 +116,47 @@ public class Program
         Console.WriteLine("Enter Discount's Amount");
         var productDiscount = Console.ReadLine() ?? string.Empty;
         _store.SetSpecialDiscount(upc, productDiscount);
+    }
+
+    private static void SetUniversalDiscountPrecedence()
+    {
+        Console.WriteLine(
+            "Enter a if you want to calculate the tax regardless of the discount amount otherwise enter b");
+        var input = Console.ReadLine() ?? string.Empty;
+
+        switch (input)
+        {
+            case "a":
+                _store.SetUniversalDiscountPrecedence(Precedence.AfterTax);
+                break;
+            case "b":
+                _store.SetUniversalDiscountPrecedence(Precedence.BeforeTax);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private static void SetUpcDiscountPrecedence()
+    {
+        Console.WriteLine("Enter UPC of the product");
+        var productUPC = Console.ReadLine() ?? string.Empty;
+        var parsed = int.TryParse(productUPC, out var upc);
+        if (!parsed) return;
+        Console.WriteLine(
+            "Enter a if you want to calculate the tax regardless of the discount amount otherwise enter b");
+        var input = Console.ReadLine() ?? string.Empty;
+        switch (input)
+        {
+            case "a":
+                _store.SetUpcDiscountPrecedence(upc, Precedence.AfterTax);
+                break;
+            case "b":
+                _store.SetUpcDiscountPrecedence(upc, Precedence.BeforeTax);
+                break;
+            default:
+                break;
+        }
     }
 
 
