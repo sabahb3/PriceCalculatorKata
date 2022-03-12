@@ -18,7 +18,7 @@ public class Program
         message += "press 5 : Set discount for a specific product\n";
         message += "press 6 : Set precedence of universal discount \n";
         message += "press 7 : Set precedence discount for a specific product\n";
-
+        message += "press 8: Add Expense for a specific product";
         message += "press # : to exit";
 
         return message;
@@ -55,6 +55,10 @@ public class Program
             case "7":
                 SetUpcDiscountPrecedence();
                 break;
+            
+            case "8":
+                GetExpeenseInfo();
+                break;
 
             default:
                 break;
@@ -85,7 +89,7 @@ public class Program
     private static void AddProduct(string name, string upc, string price)
     {
         if (!Product.ValidEntry(name, upc, price)) return;
-        var p = new Product(name, int.Parse(upc), double.Parse(price), new Discount());
+        var p = new Product(name, int.Parse(upc), double.Parse(price), new Discount(),new List<IExpenses>());
         _store.AddProduct(p);
     }
 
@@ -157,6 +161,40 @@ public class Program
             default:
                 break;
         }
+    }
+
+    private static void GetExpeenseInfo()
+    {
+        Console.WriteLine("Enter product's UPC");
+        var productUPC = Console.ReadLine() ?? string.Empty;
+        var parsed = int.TryParse(productUPC, out var upc);
+        if (!parsed)
+        {
+            Console.WriteLine("Should be integer number ");
+            return;
+        }
+
+        Console.WriteLine("Enter Expense's description");
+        var expenseDescribtion = Console.ReadLine() ?? string.Empty;
+        Console.WriteLine("Enter Expense's Amount");
+        var expenseAmount = Console.ReadLine() ?? string.Empty;
+        double amount;
+        var valid = double.TryParse(expenseAmount, out amount);
+        if (!valid) return;
+        Console.WriteLine("Enter a if the amount is absolute value, p if it is a percentage of price");
+        var expenseType = Console.ReadLine() ?? string.Empty;
+        if (expenseType != "a" && expenseType != "p") return;
+        IExpenses expense;
+        if (expenseType == "a")
+        {
+            expense = new Expense(expenseDescribtion, amount, QuantityType.AbsoluteValue);
+        }
+        else
+        {
+            expense=new Expense(expenseDescribtion, amount, QuantityType.Percentage);
+        }
+        _store.SetExpenseForProduct(upc, expense);
+        
     }
 
 
