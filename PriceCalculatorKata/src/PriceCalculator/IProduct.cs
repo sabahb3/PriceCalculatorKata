@@ -13,7 +13,6 @@ public interface IProduct
     public double CalculateFinalPrice();
     public void SetSpecialDiscount(string value);
     public double CalculateUpcDiscountValue(double price);
-    public void SetDiscountPrecedence(Precedence precedence);
     public void AddExpense(IExpenses expense);
     public string GetExpenseInfo();
 }

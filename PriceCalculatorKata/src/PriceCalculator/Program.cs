@@ -16,9 +16,8 @@ public class Program
         message += "press 3 : Change Universal Discount value\n";
         message += "press 4 : Display a Report\n";
         message += "press 5 : Set discount for a specific product\n";
-        message += "press 6 : Set precedence of universal discount \n";
-        message += "press 7 : Set precedence discount for a specific product\n";
-        message += "press 8: Add Expense for a specific product";
+        message += "press 6 : Add Expense for a specific product\n";
+        message += "press 7 : Set discounts combination way \n";
         message += "press # : to exit";
 
         return message;
@@ -49,18 +48,10 @@ public class Program
                 break;
 
             case "6":
-                SetUniversalDiscountPrecedence();
-                break;
-
-            case "7":
-                SetUpcDiscountPrecedence();
-                break;
-            
-            case "8":
                 GetExpeenseInfo();
                 break;
-
-            default:
+            case "7":
+                SetDiscountsCombinationWay();
                 break;
         }
     }
@@ -89,7 +80,7 @@ public class Program
     private static void AddProduct(string name, string upc, string price)
     {
         if (!Product.ValidEntry(name, upc, price)) return;
-        var p = new Product(name, int.Parse(upc), double.Parse(price), new Discount(),new List<IExpenses>());
+        var p = new Product(name, int.Parse(upc), double.Parse(price), new Discount(), new List<IExpenses>());
         _store.AddProduct(p);
     }
 
@@ -122,46 +113,6 @@ public class Program
         _store.SetSpecialDiscount(upc, productDiscount);
     }
 
-    private static void SetUniversalDiscountPrecedence()
-    {
-        Console.WriteLine(
-            "Enter a if you want to calculate the tax regardless of the discount amount otherwise enter b");
-        var input = Console.ReadLine() ?? string.Empty;
-
-        switch (input)
-        {
-            case "a":
-                _store.SetUniversalDiscountPrecedence(Precedence.AfterTax);
-                break;
-            case "b":
-                _store.SetUniversalDiscountPrecedence(Precedence.BeforeTax);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private static void SetUpcDiscountPrecedence()
-    {
-        Console.WriteLine("Enter UPC of the product");
-        var productUPC = Console.ReadLine() ?? string.Empty;
-        var parsed = int.TryParse(productUPC, out var upc);
-        if (!parsed) return;
-        Console.WriteLine(
-            "Enter a if you want to calculate the tax regardless of the discount amount otherwise enter b");
-        var input = Console.ReadLine() ?? string.Empty;
-        switch (input)
-        {
-            case "a":
-                _store.SetUpcDiscountPrecedence(upc, Precedence.AfterTax);
-                break;
-            case "b":
-                _store.SetUpcDiscountPrecedence(upc, Precedence.BeforeTax);
-                break;
-            default:
-                break;
-        }
-    }
 
     private static void GetExpeenseInfo()
     {
@@ -186,15 +137,18 @@ public class Program
         if (expenseType != "a" && expenseType != "p") return;
         IExpenses expense;
         if (expenseType == "a")
-        {
             expense = new Expense(expenseDescribtion, amount, QuantityType.AbsoluteValue);
-        }
         else
-        {
-            expense=new Expense(expenseDescribtion, amount, QuantityType.Percentage);
-        }
+            expense = new Expense(expenseDescribtion, amount, QuantityType.Percentage);
         _store.SetExpenseForProduct(upc, expense);
-        
+    }
+
+    private static void SetDiscountsCombinationWay()
+    {
+        Console.WriteLine("Enter a if the way is additive discounts, and m if it is multiplicative discounts");
+        var way = Console.ReadLine() ?? string.Empty;
+        if (way == "a") _store.SetCombiningDiscountsWay(CombinedDiscount.Additive);
+        else if (way == "m") _store.SetCombiningDiscountsWay(CombinedDiscount.Multiplicative);
     }
 
 

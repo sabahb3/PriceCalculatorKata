@@ -3,9 +3,9 @@ using PriceCalculator.Structures;
 
 namespace PriceCalculator;
 
-public class Expense: IExpenses
+public class Expense : IExpenses
 {
-    public Expense(string description,double amount, QuantityType type)
+    public Expense(string description, double amount, QuantityType type)
     {
         Description = description;
         Type = type;
@@ -19,7 +19,7 @@ public class Expense: IExpenses
             Amount = new FormattedDouble(percentage).Number;
         }
     }
-    
+
     public string Description { get; set; }
     public double Amount { get; private set; }
 
@@ -35,6 +35,6 @@ public class Expense: IExpenses
             Amount = new FormattedDouble(percentage).Number;
         }
     }
-    
+
     public QuantityType Type { get; set; }
 }
