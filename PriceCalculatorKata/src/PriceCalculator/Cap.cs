@@ -36,9 +36,19 @@ public class Cap:ICap
         return s_cap;
     }
 
-    public static bool ValidDiscount(double discount)
+    public bool ValidDiscount(double price, double discount)
     {
-        return s_cap.Amount >= discount;
+        return CapAmount(price) >= discount;
+    }
+
+    public double CapAmount(double price)
+    {
+        if(s_cap.Type==PriceType.AbsoluteValue) return s_cap.Amount;
+        else
+        {
+            var amount = new FormattedDouble(price * s_cap.Amount).Number;
+            return amount;
+        }
     }
 
    
