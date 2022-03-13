@@ -6,5 +6,5 @@ public interface IExpenses
 {
     string Description { get; set; }
     double Amount { get; }
-    QuantityType Type { get; set; }
+    PriceType Type { get; set; }
 }
