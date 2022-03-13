@@ -1,6 +1,6 @@
 namespace PriceCalculator.Enumerations;
 
-public enum QuantityType
+public enum PriceType
 {
     AbsoluteValue,
     Percentage

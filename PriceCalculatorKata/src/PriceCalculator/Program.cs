@@ -18,6 +18,7 @@ public class Program
         message += "press 5 : Set discount for a specific product\n";
         message += "press 6 : Add Expense for a specific product\n";
         message += "press 7 : Set discounts combination way \n";
+        message += "press 8 : Set Cap value \n";
         message += "press # : to exit";
 
         return message;
@@ -52,6 +53,9 @@ public class Program
                 break;
             case "7":
                 SetDiscountsCombinationWay();
+                break;
+            case "8":
+                SetCap();
                 break;
         }
     }
@@ -133,22 +137,48 @@ public class Program
         var valid = double.TryParse(expenseAmount, out amount);
         if (!valid) return;
         Console.WriteLine("Enter a if the amount is absolute value, p if it is a percentage of price");
-        var expenseType = Console.ReadLine() ?? string.Empty;
+        var expenseType = Console.ReadLine()?.Trim() ?? string.Empty;
         if (expenseType != "a" && expenseType != "p") return;
         IExpenses expense;
         if (expenseType == "a")
-            expense = new Expense(expenseDescribtion, amount, QuantityType.AbsoluteValue);
+            expense = new Expense(expenseDescribtion, amount, PriceType.AbsoluteValue);
         else
-            expense = new Expense(expenseDescribtion, amount, QuantityType.Percentage);
+            expense = new Expense(expenseDescribtion, amount, PriceType.Percentage);
         _store.SetExpenseForProduct(upc, expense);
     }
 
     private static void SetDiscountsCombinationWay()
     {
         Console.WriteLine("Enter a if the way is additive discounts, and m if it is multiplicative discounts");
-        var way = Console.ReadLine() ?? string.Empty;
+        var way = Console.ReadLine()?.Trim() ?? string.Empty;
         if (way == "a") _store.SetCombiningDiscountsWay(CombinedDiscount.Additive);
         else if (way == "m") _store.SetCombiningDiscountsWay(CombinedDiscount.Multiplicative);
+    }
+    
+    private static void SetCap()
+    {
+        Console.WriteLine("Enter Cap's amount");
+        var capAmount = Console.ReadLine() ?? string.Empty;
+        var parsed = double.TryParse(capAmount, out var amount);
+        if (!parsed)
+        {
+            Console.WriteLine("Should be number ");
+            return;
+        }
+        
+        Console.WriteLine("Enter a if the amount is absolute value, p if it is a percentage of price");
+        var capType = Console.ReadLine()?.Trim() ?? string.Empty;
+        if (capType != "a" && capType != "p") return;
+        if (capType == "a")
+        {
+            Cap.GetCapInstance().SetAmount(amount);
+            Cap.SetType(PriceType.AbsoluteValue);
+        }
+        else
+        {
+            Cap.GetCapInstance().SetAmount(amount);
+            Cap.SetType(PriceType.Percentage);
+        }
     }
 
 
@@ -158,7 +188,7 @@ public class Program
         while (true)
         {
             Console.WriteLine(DisplayMenu());
-            input = Console.ReadLine() ?? string.Empty;
+            input = Console.ReadLine()?.Trim() ?? string.Empty;
             if (input.Length != 1) continue;
             if (input == "#") break;
             PerformAction(input);
