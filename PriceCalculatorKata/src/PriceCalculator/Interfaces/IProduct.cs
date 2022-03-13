@@ -1,4 +1,5 @@
 using PriceCalculator.Enumerations;
+using PriceCalculator.Structures;
 
 namespace PriceCalculator;
 
@@ -15,4 +16,5 @@ public interface IProduct
     public double CalculateUpcDiscountValue(double price);
     public void AddExpense(IExpenses expense);
     public string GetExpenseInfo();
+    public Currency CurrencyCode { get; }
 }

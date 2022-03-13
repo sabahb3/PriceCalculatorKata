@@ -78,18 +78,18 @@ public class Program
 
         Console.WriteLine("Enter product's price");
         var productPrice = Console.ReadLine() ?? string.Empty;
-        
+
         Console.WriteLine("Enter Currency Iso-3 code");
         var currencyCode = Console.ReadLine() ?? "USD";
         var currency = new Currency(currencyCode);
 
-        AddProduct(productName, productUPC, productPrice,currency);
+        AddProduct(productName, productUPC, productPrice, currency);
     }
 
-    private static void AddProduct(string name, string upc, string price,Currency currency)
+    private static void AddProduct(string name, string upc, string price, Currency currency)
     {
         if (!Product.ValidEntry(name, upc, price)) return;
-        var p = new Product(name, int.Parse(upc), double.Parse(price), new Discount(), new List<IExpenses>(),currency);
+        var p = new Product(name, int.Parse(upc), double.Parse(price), new Discount(), new List<IExpenses>(), currency);
         _store.AddProduct(p);
     }
 
@@ -159,7 +159,7 @@ public class Program
         if (way == "a") _store.SetCombiningDiscountsWay(CombinedDiscount.Additive);
         else if (way == "m") _store.SetCombiningDiscountsWay(CombinedDiscount.Multiplicative);
     }
-    
+
     private static void SetCap()
     {
         Console.WriteLine("Enter Cap's amount");
@@ -170,7 +170,7 @@ public class Program
             Console.WriteLine("Should be number ");
             return;
         }
-        
+
         Console.WriteLine("Enter a if the amount is absolute value, p if it is a percentage of price");
         var capType = Console.ReadLine()?.Trim() ?? string.Empty;
         if (capType != "a" && capType != "p") return;

@@ -9,21 +9,23 @@ public class Product : IProduct
 {
     private IDiscount _specialDiscount;
     private List<IExpenses> _expenses;
-    private Currency _currency;
 
-    public Product(string name, int upc, double price, IDiscount specialDiscount, List<IExpenses> expenses,Currency currency)
+    public Product(string name, int upc, double price, IDiscount specialDiscount, List<IExpenses> expenses,
+        Currency currency)
     {
         Name = name ?? " ";
         UPC = upc;
         SetPrice(price);
         _specialDiscount = specialDiscount;
         _expenses = expenses;
-        _currency = currency;
+        CurrencyCode = currency;
     }
 
     public string Name { get; set; } = string.Empty;
     public int UPC { get; set; }
     public double Price { get; private set; }
+    public Currency CurrencyCode { get; private set; }
+
 
     private void SetPrice(double price)
     {
@@ -82,10 +84,11 @@ public class Product : IProduct
     {
         var discounts = new FormattedDouble(discountAmount()).Number;
         var valid = Cap.GetCapInstance().ValidDiscount(Price, discounts);
-        if(valid)
-        return new FormattedDouble(Price + CalculateTaxValue() - discountAmount() + CalculateExpenses()).Number;
+        if (valid)
+            return new FormattedDouble(Price + CalculateTaxValue() - discountAmount() + CalculateExpenses()).Number;
         else
-            return  new FormattedDouble(Price + CalculateTaxValue() - Cap.GetCapInstance().CapAmount(Price) + CalculateExpenses()).Number;
+            return new FormattedDouble(Price + CalculateTaxValue() - Cap.GetCapInstance().CapAmount(Price) +
+                                       CalculateExpenses()).Number;
     }
 
     public double CalculateDiscountsValue()
@@ -95,15 +98,17 @@ public class Product : IProduct
         switch (combiningDiscount)
         {
             case CombinedDiscount.Additive:
-                discounts= CalculateAdditiveDiscounts();
-                break;;
+                discounts = CalculateAdditiveDiscounts();
+                break;
+                ;
             case CombinedDiscount.Multiplicative:
-                discounts= CalculateMultiplicativeDiscount();
+                discounts = CalculateMultiplicativeDiscount();
                 break;
             default:
-                discounts= GetFinalPrice(CalculateTaxValue);
+                discounts = GetFinalPrice(CalculateTaxValue);
                 break;
         }
+
         if (Cap.GetCapInstance().ValidDiscount(Price, discounts)) return discounts;
         else return Cap.GetCapInstance().CapAmount(Price);
     }
@@ -154,6 +159,6 @@ public class Product : IProduct
 
     public void SetCurrency(string currency)
     {
-        _currency.SetCurrency(currency);
+        CurrencyCode.SetCurrency(currency);
     }
 }
