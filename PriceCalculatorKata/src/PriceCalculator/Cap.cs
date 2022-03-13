@@ -14,12 +14,12 @@ public class Cap : ICap
     {
         if (s_cap.Type == PriceType.AbsoluteValue)
         {
-            s_cap.Amount = new FormattedDouble(amount).Number;
+            s_cap.Amount = new FormattedDouble(amount).CalculatedNumber;
         }
         else
         {
             var percentage = amount / 100.0;
-            s_cap.Amount = new FormattedDouble(percentage).Number;
+            s_cap.Amount = new FormattedDouble(percentage).CalculatedNumber;
         }
     }
 
@@ -51,7 +51,7 @@ public class Cap : ICap
         }
         else
         {
-            var amount = new FormattedDouble(price * s_cap.Amount).Number;
+            var amount = new FormattedDouble(price * s_cap.Amount).CalculatedNumber;
             return amount;
         }
     }

@@ -9,5 +9,6 @@ public struct FormattedDouble
         _number = num;
     }
 
-    public double Number => Math.Round(_number, 2);
+    public double CalculatedNumber => Math.Round(_number, 4);
+    public double FinalNumber => Math.Round(_number, 2);
 }
