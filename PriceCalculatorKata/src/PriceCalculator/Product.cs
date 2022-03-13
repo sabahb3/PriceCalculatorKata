@@ -3,9 +3,7 @@ using PriceCalculator.Structures;
 
 namespace PriceCalculator;
 
-public delegate double TaxAmount();
-
-public delegate double DiscountAmount(double price);
+public delegate double DiscountAmount();
 
 public class Product : IProduct
 {
@@ -51,34 +49,50 @@ public class Product : IProduct
         return new FormattedDouble(price * upcDiscount).Number;
     }
 
-    private double CalculateDiscountsValueOnActualPrice()
+    private double CalculateAdditiveDiscounts()
     {
         return new FormattedDouble(CalculateUniversalDiscountValue(Price) + CalculateUpcDiscountValue(Price)).Number;
     }
 
-    private double CalculateDiscountsValueOnRemaining(DiscountAmount onActualPrice, DiscountAmount onRemainingPrice)
+    private double CalculateMultiplicativeDiscount()
     {
-        var beforeTaxDiscount = onActualPrice(Price);
-        var remaining = Price - beforeTaxDiscount;
-        return new FormattedDouble(beforeTaxDiscount + onRemainingPrice(remaining)).Number;
+        var universalDiscount = CalculateUniversalDiscountValue(Price);
+        var remaining = Price - universalDiscount;
+        return new FormattedDouble(universalDiscount + CalculateUpcDiscountValue(remaining)).Number;
     }
 
 
     public double CalculateFinalPrice()
     {
-        //todo Implement Combining requirement 
-        return GetFinalPrice(CalculateTaxValue);
+        var combiningDiscount = RelativeDiscount.GetDiscountInstance().CombiningDiscount;
+        switch (combiningDiscount)
+        {
+            case CombinedDiscount.Additive:
+                return GetFinalPrice(CalculateAdditiveDiscounts);
+            case CombinedDiscount.Multiplicative:
+                return GetFinalPrice(CalculateMultiplicativeDiscount);
+            default:
+                return GetFinalPrice(CalculateAdditiveDiscounts);
+        }
     }
 
-    private double GetFinalPrice(TaxAmount taxAmount)
+    private double GetFinalPrice(DiscountAmount discountAmount)
     {
-        return new FormattedDouble(Price + taxAmount() - CalculateDiscountsValue() + CalculateExpenses()).Number;
+        return new FormattedDouble(Price + CalculateTaxValue() - discountAmount() + CalculateExpenses()).Number;
     }
 
     public double CalculateDiscountsValue()
     {
-        //todo Implement Combining requirement 
-        return CalculateDiscountsValueOnActualPrice();
+        var combiningDiscount = RelativeDiscount.GetDiscountInstance().CombiningDiscount;
+        switch (combiningDiscount)
+        {
+            case CombinedDiscount.Additive:
+                return CalculateAdditiveDiscounts();
+            case CombinedDiscount.Multiplicative:
+                return CalculateMultiplicativeDiscount();
+            default:
+                return GetFinalPrice(CalculateTaxValue);
+        }
     }
 
 
@@ -106,7 +120,7 @@ public class Product : IProduct
     {
         var cost = new FormattedDouble(0d).Number;
         foreach (var expense in _expenses) cost += GetExpenseAmount(expense);
-        return cost;
+        return new FormattedDouble(cost).Number;
     }
 
     private double GetExpenseAmount(IExpenses expense)
@@ -115,7 +129,7 @@ public class Product : IProduct
         if (expense.Type == QuantityType.AbsoluteValue) cost = new FormattedDouble(expense.Amount).Number;
         else
             cost = new FormattedDouble(Price * expense.Amount).Number;
-        return cost;
+        return new FormattedDouble(cost).Number;
     }
 
     public string GetExpenseInfo()

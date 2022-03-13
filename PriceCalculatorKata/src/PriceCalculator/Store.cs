@@ -6,9 +6,9 @@ public class Store
 {
     private List<IProduct> _products;
     private ITax _tax;
-    private IDiscount _discount;
+    private IRelativeDiscount _discount;
 
-    public Store(ITax tax, IDiscount discount, List<IProduct> products)
+    public Store(ITax tax, IRelativeDiscount discount, List<IProduct> products)
     {
         _tax = tax;
         _discount = discount;
@@ -53,5 +53,10 @@ public class Store
     {
         foreach (var product in _products.Where(product => product.UPC == upc))
             product.AddExpense(expense);
+    }
+
+    public void SetCombiningDiscountsWay(CombinedDiscount combinedDiscount)
+    {
+        _discount.CombiningDiscount = combinedDiscount;
     }
 }

@@ -16,9 +16,8 @@ public class Program
         message += "press 3 : Change Universal Discount value\n";
         message += "press 4 : Display a Report\n";
         message += "press 5 : Set discount for a specific product\n";
-        message += "press 6 : Set precedence of universal discount \n";
-        message += "press 7 : Set precedence discount for a specific product\n";
-        message += "press 8: Add Expense for a specific product";
+        message += "press 6 : Add Expense for a specific product\n";
+        message += "press 7 : Set discounts combination way \n";
         message += "press # : to exit";
 
         return message;
@@ -51,8 +50,8 @@ public class Program
             case "6":
                 GetExpeenseInfo();
                 break;
-
-            default:
+            case "7":
+                SetDiscountsCombinationWay();
                 break;
         }
     }
@@ -142,6 +141,14 @@ public class Program
         else
             expense = new Expense(expenseDescribtion, amount, QuantityType.Percentage);
         _store.SetExpenseForProduct(upc, expense);
+    }
+
+    private static void SetDiscountsCombinationWay()
+    {
+        Console.WriteLine("Enter a if the way is additive discounts, and m if it is multiplicative discounts");
+        var way = Console.ReadLine() ?? string.Empty;
+        if (way == "a") _store.SetCombiningDiscountsWay(CombinedDiscount.Additive);
+        else if (way == "m") _store.SetCombiningDiscountsWay(CombinedDiscount.Multiplicative);
     }
 
 

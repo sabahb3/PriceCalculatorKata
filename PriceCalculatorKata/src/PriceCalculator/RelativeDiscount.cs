@@ -1,8 +1,11 @@
+using PriceCalculator.Enumerations;
+
 namespace PriceCalculator;
 
-public class RelativeDiscount : Discount, IDiscount
+public class RelativeDiscount : Discount, IDiscount, IRelativeDiscount
 {
     private static readonly RelativeDiscount s_discountInstance = new();
+    public CombinedDiscount CombiningDiscount { get; set; }
 
     private RelativeDiscount()
     {
