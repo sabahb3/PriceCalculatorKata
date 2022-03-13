@@ -5,5 +5,5 @@ namespace PriceCalculator;
 public interface ICap
 {
     double Amount { get; }
-    PriceType Type { get; set; }
+    PriceType Type { get; }
 }
