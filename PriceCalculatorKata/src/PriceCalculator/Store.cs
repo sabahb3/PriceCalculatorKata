@@ -49,22 +49,9 @@ public class Store
             product.SetSpecialDiscount(discount);
     }
 
-    public void SetUniversalDiscountPrecedence(Precedence precedence)
-    {
-        _discount.DiscountPrecedence = precedence;
-    }
-
-    public void SetUpcDiscountPrecedence(int upc, Precedence precedence)
-    {
-        foreach (var product in _products.Where(product => product.UPC == upc))
-            product.SetDiscountPrecedence(precedence);
-    }
-
     public void SetExpenseForProduct(int upc, IExpenses expense)
     {
         foreach (var product in _products.Where(product => product.UPC == upc))
             product.AddExpense(expense);
-
     }
-    
 }

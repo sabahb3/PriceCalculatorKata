@@ -49,14 +49,6 @@ public class Program
                 break;
 
             case "6":
-                SetUniversalDiscountPrecedence();
-                break;
-
-            case "7":
-                SetUpcDiscountPrecedence();
-                break;
-            
-            case "8":
                 GetExpeenseInfo();
                 break;
 
@@ -89,7 +81,7 @@ public class Program
     private static void AddProduct(string name, string upc, string price)
     {
         if (!Product.ValidEntry(name, upc, price)) return;
-        var p = new Product(name, int.Parse(upc), double.Parse(price), new Discount(),new List<IExpenses>());
+        var p = new Product(name, int.Parse(upc), double.Parse(price), new Discount(), new List<IExpenses>());
         _store.AddProduct(p);
     }
 
@@ -122,46 +114,6 @@ public class Program
         _store.SetSpecialDiscount(upc, productDiscount);
     }
 
-    private static void SetUniversalDiscountPrecedence()
-    {
-        Console.WriteLine(
-            "Enter a if you want to calculate the tax regardless of the discount amount otherwise enter b");
-        var input = Console.ReadLine() ?? string.Empty;
-
-        switch (input)
-        {
-            case "a":
-                _store.SetUniversalDiscountPrecedence(Precedence.AfterTax);
-                break;
-            case "b":
-                _store.SetUniversalDiscountPrecedence(Precedence.BeforeTax);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private static void SetUpcDiscountPrecedence()
-    {
-        Console.WriteLine("Enter UPC of the product");
-        var productUPC = Console.ReadLine() ?? string.Empty;
-        var parsed = int.TryParse(productUPC, out var upc);
-        if (!parsed) return;
-        Console.WriteLine(
-            "Enter a if you want to calculate the tax regardless of the discount amount otherwise enter b");
-        var input = Console.ReadLine() ?? string.Empty;
-        switch (input)
-        {
-            case "a":
-                _store.SetUpcDiscountPrecedence(upc, Precedence.AfterTax);
-                break;
-            case "b":
-                _store.SetUpcDiscountPrecedence(upc, Precedence.BeforeTax);
-                break;
-            default:
-                break;
-        }
-    }
 
     private static void GetExpeenseInfo()
     {
@@ -186,15 +138,10 @@ public class Program
         if (expenseType != "a" && expenseType != "p") return;
         IExpenses expense;
         if (expenseType == "a")
-        {
             expense = new Expense(expenseDescribtion, amount, QuantityType.AbsoluteValue);
-        }
         else
-        {
-            expense=new Expense(expenseDescribtion, amount, QuantityType.Percentage);
-        }
+            expense = new Expense(expenseDescribtion, amount, QuantityType.Percentage);
         _store.SetExpenseForProduct(upc, expense);
-        
     }
 
 

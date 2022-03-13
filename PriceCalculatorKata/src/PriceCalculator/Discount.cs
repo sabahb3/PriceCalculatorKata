@@ -6,8 +6,6 @@ public class Discount : IDiscount
 {
     public int DiscountValue { get; private set; }
 
-    public Precedence DiscountPrecedence { get; set; }
-
     public void SetDiscount(string discount)
     {
         if (isValidDiscount(discount))

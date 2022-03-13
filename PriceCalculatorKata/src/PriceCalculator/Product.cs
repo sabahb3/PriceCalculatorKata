@@ -97,11 +97,6 @@ public class Product : IProduct
         _specialDiscount.SetDiscount(value);
     }
 
-    public void SetDiscountPrecedence(Precedence precedence)
-    {
-        _specialDiscount.DiscountPrecedence = precedence;
-    }
-
     public void AddExpense(IExpenses expense)
     {
         _expenses.Add(expense);
