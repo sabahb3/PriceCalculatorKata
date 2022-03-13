@@ -9,14 +9,16 @@ public class Product : IProduct
 {
     private IDiscount _specialDiscount;
     private List<IExpenses> _expenses;
+    private Currency _currency;
 
-    public Product(string name, int upc, double price, IDiscount specialDiscount, List<IExpenses> expenses)
+    public Product(string name, int upc, double price, IDiscount specialDiscount, List<IExpenses> expenses,Currency currency)
     {
         Name = name ?? " ";
         UPC = upc;
         SetPrice(price);
         _specialDiscount = specialDiscount;
         _expenses = expenses;
+        _currency = currency;
     }
 
     public string Name { get; set; } = string.Empty;
@@ -148,5 +150,10 @@ public class Product : IProduct
         var info = string.Empty;
         foreach (var expense in _expenses) info += $"{expense.Description} = ${GetExpenseAmount(expense)}\n";
         return info;
+    }
+
+    public void SetCurrency(string currency)
+    {
+        _currency.SetCurrency(currency);
     }
 }

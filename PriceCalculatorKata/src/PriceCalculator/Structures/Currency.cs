@@ -4,7 +4,7 @@ namespace PriceCalculator.Structures;
 
 public struct Currency
 {
-    public string? _currency { get; private set; }
+    public string? _Currency { get; private set; }
 
     public Currency(string currency) : this()
     {
@@ -13,8 +13,8 @@ public struct Currency
     public void SetCurrency(string currency)
     {
         if (currency.Length != 3 && Regex.IsMatch(currency,@"[A-Z a-z]+$"))
-            _currency = currency.ToUpper();
+            _Currency = currency.ToUpper();
         else
-            _currency = "USD";
+            _Currency = "USD";
     }
 }
