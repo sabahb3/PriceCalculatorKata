@@ -11,12 +11,12 @@ public class Expense : IExpenses
         Type = type;
         if (type == PriceType.AbsoluteValue)
         {
-            Amount = new FormattedDouble(amount).Number;
+            Amount = new FormattedDouble(amount).CalculatedNumber;
         }
         else
         {
             var percentage = amount / 100.0;
-            Amount = new FormattedDouble(percentage).Number;
+            Amount = new FormattedDouble(percentage).CalculatedNumber;
         }
     }
 
@@ -27,12 +27,12 @@ public class Expense : IExpenses
     {
         if (Type == PriceType.AbsoluteValue)
         {
-            Amount = new FormattedDouble(amount).Number;
+            Amount = new FormattedDouble(amount).CalculatedNumber;
         }
         else
         {
             var percentage = amount / 100.0;
-            Amount = new FormattedDouble(percentage).Number;
+            Amount = new FormattedDouble(percentage).CalculatedNumber;
         }
     }
 

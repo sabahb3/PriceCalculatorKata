@@ -1,3 +1,5 @@
+using PriceCalculator.Structures;
+
 namespace PriceCalculator;
 
 public class Report
@@ -19,14 +21,16 @@ public class Report
         foreach (var product in _products)
         {
             currencyCode = product.CurrencyCode.CurrencyCode;
-            report += $"Cost = {product.Price} {currencyCode}\n";
-            if (taxAmount != noAmount) report += $"Tax = {product.CalculateTaxValue()} {currencyCode} \n";
+            report += $"Cost = {new FormattedDouble(product.Price).FinalNumber} {currencyCode}\n";
+            if (taxAmount != noAmount)
+                report += $"Tax = {new FormattedDouble(product.CalculateTaxValue()).FinalNumber} {currencyCode} \n";
             discountAmount = product.CalculateDiscountsValue();
-            if (discountAmount != noAmount) report += $"Discounts = {discountAmount} {currencyCode} \n";
+            if (discountAmount != noAmount)
+                report += $"Discounts = {new FormattedDouble(discountAmount).FinalNumber} {currencyCode} \n";
             report += product.GetExpenseInfo();
-            report += $"Total = {product.CalculateFinalPrice()} {currencyCode} \n";
+            report += $"Total = {new FormattedDouble(product.CalculateFinalPrice()).FinalNumber} {currencyCode} \n";
             if (discountAmount == noAmount) return report;
-            report += $"{discountAmount} {currencyCode} amount which was deduced";
+            report += $"{new FormattedDouble(discountAmount).FinalNumber} {currencyCode} amount which was deduced";
         }
 
         return report;
