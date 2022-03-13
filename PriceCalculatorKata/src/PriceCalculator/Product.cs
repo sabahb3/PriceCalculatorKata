@@ -102,7 +102,6 @@ public class Product : IProduct
                 discounts= GetFinalPrice(CalculateTaxValue);
                 break;
         }
-
         if (Cap.GetCapInstance().ValidDiscount(Price, discounts)) return discounts;
         else return Cap.GetCapInstance().CapAmount(Price);
     }

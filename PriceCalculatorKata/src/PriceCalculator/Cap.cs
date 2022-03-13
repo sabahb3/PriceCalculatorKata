@@ -10,7 +10,7 @@ public class Cap:ICap
     public double Amount { get; private set; }
     public PriceType Type { get; private set; }
 
-    public static void SetAmount(double amount)
+    public void SetAmount(double amount)
     {
         if (s_cap.Type == PriceType.AbsoluteValue)
         {
@@ -26,6 +26,7 @@ public class Cap:ICap
     public static void SetType(PriceType type)
     {
         s_cap.Type = type;
+        s_cap.SetAmount(s_cap.Amount);
     }
     private Cap()
     {
