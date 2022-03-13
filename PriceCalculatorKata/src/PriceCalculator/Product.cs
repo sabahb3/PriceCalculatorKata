@@ -78,21 +78,33 @@ public class Product : IProduct
 
     private double GetFinalPrice(DiscountAmount discountAmount)
     {
+        var discounts = new FormattedDouble(discountAmount()).Number;
+        var valid = Cap.GetCapInstance().ValidDiscount(Price, discounts);
+        if(valid)
         return new FormattedDouble(Price + CalculateTaxValue() - discountAmount() + CalculateExpenses()).Number;
+        else
+            return  new FormattedDouble(Price + CalculateTaxValue() - Cap.GetCapInstance().CapAmount(Price) + CalculateExpenses()).Number;
     }
 
     public double CalculateDiscountsValue()
     {
         var combiningDiscount = RelativeDiscount.GetDiscountInstance().CombiningDiscount;
+        var discounts = 0d;
         switch (combiningDiscount)
         {
             case CombinedDiscount.Additive:
-                return CalculateAdditiveDiscounts();
+                discounts= CalculateAdditiveDiscounts();
+                break;;
             case CombinedDiscount.Multiplicative:
-                return CalculateMultiplicativeDiscount();
+                discounts= CalculateMultiplicativeDiscount();
+                break;
             default:
-                return GetFinalPrice(CalculateTaxValue);
+                discounts= GetFinalPrice(CalculateTaxValue);
+                break;
         }
+
+        if (Cap.GetCapInstance().ValidDiscount(Price, discounts)) return discounts;
+        else return Cap.GetCapInstance().CapAmount(Price);
     }
 
 
