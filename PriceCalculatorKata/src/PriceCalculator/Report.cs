@@ -11,14 +11,19 @@ public class Report
 
     public string Reporting()
     {
-        var noDiscount = 0d;
+        const double noAmount = 0d;
         var report = string.Empty;
         var discountAmount = 0d;
+        var taxAmount = Tax.GetTax().TaxValue;
         foreach (var product in _products)
         {
-            report += $"Price ${product.CalculateFinalPrice()}\n";
+            report += $"Cost = ${product.Price}\n";
+            if (taxAmount != noAmount) report += $"Tax = ${product.CalculateTaxValue()} \n";
             discountAmount = product.CalculateDiscountsValue();
-            if (discountAmount == noDiscount) return report;
+            if (discountAmount != noAmount) report += $"Discounts = ${discountAmount} \n";
+            report += product.GetExpenseInfo();
+            report += $"Total = ${product.CalculateFinalPrice()} \n";
+            if (discountAmount == noAmount) return report;
             report += $"${discountAmount} amount which was deduced";
         }
 

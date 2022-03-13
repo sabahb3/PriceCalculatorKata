@@ -10,13 +10,15 @@ public delegate double DiscountAmount(double price);
 public class Product : IProduct
 {
     private IDiscount _specialDiscount;
+    private List<IExpenses> _expenses;
 
-    public Product(string name, int upc, double price, IDiscount specialDiscount)
+    public Product(string name, int upc, double price, IDiscount specialDiscount,List<IExpenses> expenses)
     {
         Name = name ?? " ";
         UPC = upc;
         SetPrice(price);
         _specialDiscount = specialDiscount;
+        _expenses = expenses;
     }
 
     public string Name { get; set; } = string.Empty;
@@ -110,7 +112,7 @@ public class Product : IProduct
 
     private double GetFinalPrice(TaxAmount taxAmount)
     {
-        return new FormattedDouble(Price + taxAmount() - CalculateDiscountsValue()).Number;
+        return new FormattedDouble(Price + taxAmount() - CalculateDiscountsValue()+ CalculateExpenses()).Number;
     }
 
     public double CalculateDiscountsValue()
@@ -152,5 +154,41 @@ public class Product : IProduct
     public bool HasSpecialDiscount()
     {
         return _specialDiscount.DiscountValue > 0;
+    }
+
+    public void AddExpense(IExpenses expense)
+    {
+        _expenses.Add(expense);
+    }
+
+    private double CalculateExpenses()
+    {
+        double cost = new FormattedDouble(0d).Number;
+        foreach (var expense in _expenses)
+        {
+            cost += GetExpenseAmount(expense);
+        }
+        return cost;
+    }
+
+    private double GetExpenseAmount(IExpenses expense)
+    {
+        double cost = new FormattedDouble(0d).Number;
+        if (expense.Type == QuantityType.AbsoluteValue) cost = new FormattedDouble(expense.Amount).Number;
+        else
+        {
+            cost = new FormattedDouble(Price * expense.Amount).Number;
+        }
+        return cost;
+
+    }
+    public string GetExpenseInfo()
+    {
+        string info = string.Empty;
+        foreach (var expense in _expenses)
+        {
+            info += $"{expense.Description} = ${GetExpenseAmount(expense)}\n";
+        }
+        return info;
     }
 }
