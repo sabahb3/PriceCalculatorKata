@@ -126,7 +126,7 @@ public class Product : IProduct
     private double GetExpenseAmount(IExpenses expense)
     {
         var cost = new FormattedDouble(0d).Number;
-        if (expense.Type == QuantityType.AbsoluteValue) cost = new FormattedDouble(expense.Amount).Number;
+        if (expense.Type == PriceType.AbsoluteValue) cost = new FormattedDouble(expense.Amount).Number;
         else
             cost = new FormattedDouble(Price * expense.Amount).Number;
         return new FormattedDouble(cost).Number;

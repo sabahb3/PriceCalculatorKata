@@ -137,9 +137,9 @@ public class Program
         if (expenseType != "a" && expenseType != "p") return;
         IExpenses expense;
         if (expenseType == "a")
-            expense = new Expense(expenseDescribtion, amount, QuantityType.AbsoluteValue);
+            expense = new Expense(expenseDescribtion, amount, PriceType.AbsoluteValue);
         else
-            expense = new Expense(expenseDescribtion, amount, QuantityType.Percentage);
+            expense = new Expense(expenseDescribtion, amount, PriceType.Percentage);
         _store.SetExpenseForProduct(upc, expense);
     }
 

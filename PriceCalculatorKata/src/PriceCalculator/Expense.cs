@@ -5,11 +5,11 @@ namespace PriceCalculator;
 
 public class Expense : IExpenses
 {
-    public Expense(string description, double amount, QuantityType type)
+    public Expense(string description, double amount, PriceType type)
     {
         Description = description;
         Type = type;
-        if (type == QuantityType.AbsoluteValue)
+        if (type == PriceType.AbsoluteValue)
         {
             Amount = new FormattedDouble(amount).Number;
         }
@@ -25,7 +25,7 @@ public class Expense : IExpenses
 
     public void SetAmount(double amount)
     {
-        if (Type == QuantityType.AbsoluteValue)
+        if (Type == PriceType.AbsoluteValue)
         {
             Amount = new FormattedDouble(amount).Number;
         }
@@ -36,5 +36,5 @@ public class Expense : IExpenses
         }
     }
 
-    public QuantityType Type { get; set; }
+    public PriceType Type { get; set; }
 }
