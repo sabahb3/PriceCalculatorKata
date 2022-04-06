@@ -1,8 +1,12 @@
+using PriceCalculator.Enumerations;
+
 namespace PriceCalculator;
 
 public class Discount : IDiscount
 {
     public int DiscountValue { get; private set; }
+
+    public Precedence DiscountPrecedence { get; set; }
 
     public void SetDiscount(string discount)
     {

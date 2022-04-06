@@ -1,4 +1,11 @@
+using PriceCalculator.Enumerations;
+using PriceCalculator.Structures;
+
 namespace PriceCalculator;
+
+public delegate double TaxAmount();
+
+public delegate double DiscountAmount(double price);
 
 public class Product : IProduct
 {
@@ -8,42 +15,119 @@ public class Product : IProduct
     {
         Name = name ?? " ";
         UPC = upc;
-        Price = price;
+        SetPrice(price);
         _specialDiscount = specialDiscount;
     }
 
     public string Name { get; set; } = string.Empty;
     public int UPC { get; set; }
-    public double Price { get; set; }
+    public double Price { get; private set; }
 
-
-    public double CalculatePriceAfterTax()
+    private void SetPrice(double price)
     {
-        return Price + CalculateTaxValue();
+        var p = new FormattedDouble(price);
+        Price = p.Number;
     }
 
     public double CalculateTaxValue()
     {
         var tax = Tax.GetTax();
-        return Price * (tax.TaxValue / 100.0);
+        var taxPercentage = new FormattedDouble(tax.TaxValue / 100.0);
+        return new FormattedDouble(Price * taxPercentage.Number).Number;
     }
 
-    public double CalculateDiscountValue()
+    private double CalculateTaxValueAfterUniversalDiscount()
+    {
+        var price = Price - new FormattedDouble(CalculateUniversalDiscountValue(Price)).Number;
+        var tax = Tax.GetTax();
+        var taxPercentage = new FormattedDouble(tax.TaxValue / 100.0).Number;
+        return new FormattedDouble(price * taxPercentage).Number;
+    }
+
+    private double CalculateTaxValueAfterUpcDiscount()
+    {
+        var price = Price - new FormattedDouble(CalculateUpcDiscountValue(Price)).Number;
+        var tax = Tax.GetTax();
+        var taxPercentage = new FormattedDouble(tax.TaxValue / 100.0).Number;
+        return new FormattedDouble(price * taxPercentage).Number;
+    }
+
+    private double CalculateTaxValueAfterAllDiscounts()
+    {
+        var price = Price - new FormattedDouble(CalculateUniversalDiscountValue(Price)).Number;
+        price -= new FormattedDouble(CalculateUpcDiscountValue(Price)).Number;
+        var tax = Tax.GetTax();
+        var taxPercentage = new FormattedDouble(tax.TaxValue / 100.0).Number;
+        return new FormattedDouble(price * taxPercentage).Number;
+    }
+
+
+    public double CalculateUniversalDiscountValue(double price)
     {
         var universalDiscount = RelativeDiscount.GetDiscountInstance();
-        return Price * (universalDiscount.DiscountValue / 100.0);
+        var discount = new FormattedDouble(universalDiscount.DiscountValue / 100.0).Number;
+        return new FormattedDouble(price * discount).Number;
     }
 
-    public double CalculateUpcDiscountValue()
+    public double CalculateUpcDiscountValue(double price)
     {
-        var upcDiscount = _specialDiscount.DiscountValue;
-        return Price * (upcDiscount / 100.0);
+        var upcDiscount = new FormattedDouble(_specialDiscount.DiscountValue / 100.0).Number;
+        return new FormattedDouble(price * upcDiscount).Number;
     }
 
-    public double CalculatePriceAfterDiscount()
+    private double CalculateDiscountsValueOnActualPrice()
     {
-        return CalculatePriceAfterTax() - CalculateDiscountValue() - CalculateUpcDiscountValue();
+        return new FormattedDouble(CalculateUniversalDiscountValue(Price) + CalculateUpcDiscountValue(Price)).Number;
     }
+
+    private double CalculateDiscountsValueOnRemaining(DiscountAmount onActualPrice, DiscountAmount onRemainingPrice)
+    {
+        var beforeTaxDiscount = onActualPrice(Price);
+        var remaining = Price - beforeTaxDiscount;
+        return new FormattedDouble(beforeTaxDiscount + onRemainingPrice(remaining)).Number;
+    }
+
+
+    public double CalculateFinalPrice()
+    {
+        var universalDiscount = RelativeDiscount.GetDiscountInstance();
+
+        if (_specialDiscount.DiscountPrecedence == Precedence.AfterTax &&
+            universalDiscount.DiscountPrecedence == Precedence.AfterTax)
+            return GetFinalPrice(CalculateTaxValue);
+
+        else if (_specialDiscount.DiscountPrecedence == Precedence.AfterTax &&
+                 universalDiscount.DiscountPrecedence == Precedence.BeforeTax)
+            return GetFinalPrice(CalculateTaxValueAfterUniversalDiscount);
+
+        else if (_specialDiscount.DiscountPrecedence == Precedence.BeforeTax &&
+                 universalDiscount.DiscountPrecedence == Precedence.AfterTax)
+            return GetFinalPrice(CalculateTaxValueAfterUpcDiscount);
+
+        else
+            return GetFinalPrice(CalculateTaxValueAfterAllDiscounts);
+    }
+
+    private double GetFinalPrice(TaxAmount taxAmount)
+    {
+        return new FormattedDouble(Price + taxAmount() - CalculateDiscountsValue()).Number;
+    }
+
+    public double CalculateDiscountsValue()
+    {
+        var universalDiscount = RelativeDiscount.GetDiscountInstance();
+
+        if (_specialDiscount.DiscountPrecedence == Precedence.AfterTax &&
+            universalDiscount.DiscountPrecedence == Precedence.BeforeTax)
+            return CalculateDiscountsValueOnRemaining(CalculateUniversalDiscountValue, CalculateUpcDiscountValue);
+
+        else if (_specialDiscount.DiscountPrecedence == Precedence.BeforeTax &&
+                 universalDiscount.DiscountPrecedence == Precedence.AfterTax)
+            return CalculateDiscountsValueOnRemaining(CalculateUpcDiscountValue, CalculateUniversalDiscountValue);
+        else
+            return CalculateDiscountsValueOnActualPrice();
+    }
+
 
     public static bool ValidEntry(string name, string upc, string price)
     {
@@ -60,9 +144,13 @@ public class Product : IProduct
         _specialDiscount.SetDiscount(value);
     }
 
+    public void SetDiscountPrecedence(Precedence precedence)
+    {
+        _specialDiscount.DiscountPrecedence = precedence;
+    }
+
     public bool HasSpecialDiscount()
     {
-        if (_specialDiscount.DiscountValue > 0) return true;
-        return false;
+        return _specialDiscount.DiscountValue > 0;
     }
 }

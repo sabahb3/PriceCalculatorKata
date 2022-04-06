@@ -1,13 +1,17 @@
+using PriceCalculator.Enumerations;
+
 namespace PriceCalculator;
 
 public interface IProduct
 {
     public string Name { get; set; }
     public int UPC { get; set; }
-    public double Price { get; set; }
+    public double Price { get; }
     public double CalculateTaxValue();
-    public double CalculateDiscountValue();
-    public double CalculatePriceAfterDiscount();
+    public double CalculateUniversalDiscountValue(double price);
+    public double CalculateDiscountsValue();
+    public double CalculateFinalPrice();
     public void SetSpecialDiscount(string value);
-    public double CalculateUpcDiscountValue();
+    public double CalculateUpcDiscountValue(double price);
+    public void SetDiscountPrecedence(Precedence precedence);
 }
