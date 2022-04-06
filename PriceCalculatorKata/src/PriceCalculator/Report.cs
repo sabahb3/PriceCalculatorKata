@@ -15,16 +15,18 @@ public class Report
         var report = string.Empty;
         var discountAmount = 0d;
         var taxAmount = Tax.GetTax().TaxValue;
+        var currencyCode = string.Empty;
         foreach (var product in _products)
         {
-            report += $"Cost = ${product.Price}\n";
-            if (taxAmount != noAmount) report += $"Tax = ${product.CalculateTaxValue()} \n";
+            currencyCode = product.CurrencyCode.CurrencyCode;
+            report += $"Cost = {product.Price} {currencyCode}\n";
+            if (taxAmount != noAmount) report += $"Tax = {product.CalculateTaxValue()} {currencyCode} \n";
             discountAmount = product.CalculateDiscountsValue();
-            if (discountAmount != noAmount) report += $"Discounts = ${discountAmount} \n";
+            if (discountAmount != noAmount) report += $"Discounts = {discountAmount} {currencyCode} \n";
             report += product.GetExpenseInfo();
-            report += $"Total = ${product.CalculateFinalPrice()} \n";
+            report += $"Total = {product.CalculateFinalPrice()} {currencyCode} \n";
             if (discountAmount == noAmount) return report;
-            report += $"${discountAmount} amount which was deduced";
+            report += $"{discountAmount} {currencyCode} amount which was deduced";
         }
 
         return report;

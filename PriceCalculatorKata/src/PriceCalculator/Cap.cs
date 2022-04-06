@@ -3,7 +3,7 @@ using PriceCalculator.Structures;
 
 namespace PriceCalculator;
 
-public class Cap:ICap
+public class Cap : ICap
 {
     private static readonly Cap s_cap = new();
 
@@ -28,6 +28,7 @@ public class Cap:ICap
         s_cap.Type = type;
         s_cap.SetAmount(s_cap.Amount);
     }
+
     private Cap()
     {
     }
@@ -44,13 +45,14 @@ public class Cap:ICap
 
     public double CapAmount(double price)
     {
-        if(s_cap.Type==PriceType.AbsoluteValue) return s_cap.Amount;
+        if (s_cap.Type == PriceType.AbsoluteValue)
+        {
+            return s_cap.Amount;
+        }
         else
         {
             var amount = new FormattedDouble(price * s_cap.Amount).Number;
             return amount;
         }
     }
-
-   
 }
